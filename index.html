@@ -1,1 +1,583 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রান্নাঘর গাজীপুর - Rannaghar Gazipur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #fdfcf0; }
+        .bengali-font { font-family: 'Hind Siliguri', sans-serif; }
+        
+        /* Custom Animations */
+        @keyframes shake { 
+            0%, 100% { transform: translateX(0); } 
+            25% { transform: translateX(-8px); } 
+            75% { transform: translateX(8px); } 
+        }
+        .animate-shake { animation: shake 0.2s ease-in-out infinite; animation-iteration-count: 2; }
 
+        /* Modal Transitions */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 0.2s, transform 0.2s; }
+        .modal-exit { opacity: 0; transform: scale(0.95); transition: opacity 0.2s, transform 0.2s; }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #ea580c;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-orange-600 text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl">🍲</span>
+                <h1 class="text-2xl font-bold tracking-tight" id="siteName">রান্নাঘর গাজীপুর</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div id="shopStatusBadge" class="hidden bg-yellow-400 text-orange-900 px-3 py-1 rounded-full text-xs font-black animate-pulse uppercase">
+                    শপ বর্তমানে বন্ধ
+                </div>
+                <div class="hidden md:block text-sm font-medium">গাজীপুরের সেরা ঘরোয়া স্বাদ</div>
+                <button id="adminBtn" class="p-3 bg-orange-700/50 hover:bg-orange-800 rounded-full transition-all active:scale-95 flex items-center justify-center shadow-inner">
+                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <!-- Shop Closed Warning -->
+        <div id="shopClosedWarning" class="hidden mb-8 p-6 bg-red-100 border-2 border-red-200 rounded-3xl text-center shadow-lg">
+            <h3 class="text-2xl font-black text-red-600 bengali-font mb-1">বর্তমানে শপ বন্ধ আছে</h3>
+            <p class="text-red-500 font-medium">আমরা এখন কোনো নতুন অর্ডার নিচ্ছি না। কিছুক্ষণ পর আবার চেষ্টা করুন।</p>
+        </div>
+
+        <div class="text-center mb-6">
+            <h2 class="text-4xl font-extrabold text-stone-900 mb-2 bengali-font">আমাদের সুস্বাদু মেনু</h2>
+            <div class="w-24 h-1.5 bg-orange-500 mx-auto rounded-full"></div>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap justify-center items-center gap-3 mb-10 overflow-x-auto py-2" id="filterContainer">
+            <button class="filter-btn active px-5 py-2 rounded-full font-bold transition-all whitespace-nowrap bg-orange-600 text-white shadow-lg scale-105" data-filter="all">সব খাবার</button>
+            <button class="filter-btn px-5 py-2 rounded-full font-bold transition-all whitespace-nowrap bg-orange-100 text-orange-700 hover:bg-orange-200" data-filter="new">নতুন (New)</button>
+            <button class="filter-btn px-5 py-2 rounded-full font-bold transition-all whitespace-nowrap bg-orange-100 text-orange-700 hover:bg-orange-200" data-filter="popular">জনপ্রিয় (Popular)</button>
+            <button class="filter-btn px-5 py-2 rounded-full font-bold transition-all whitespace-nowrap bg-orange-100 text-orange-700 hover:bg-orange-200" data-filter="price-asc">দাম (কম থেকে বেশি)</button>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Products will be injected here via JS -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-stone-900 text-white py-12 px-4 mt-12 text-center">
+        <h3 class="text-2xl font-bold mb-4 bengali-font" id="footerSiteName">রান্নাঘর গাজীপুর</h3>
+        <p class="text-stone-400 mb-2">গাজীপুরের সেরা ঘরোয়া স্বাদ এখন আপনার দরজায়।</p>
+        <p class="text-stone-500 text-sm mb-6" id="footerAddress">গাজীপুর, বাংলাদেশ</p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a id="footerCallLink" href="tel:01722088427" class="bg-blue-600/10 hover:bg-blue-600/20 px-6 py-3 rounded-2xl text-stone-300 font-bold inline-block border border-blue-600/30">Call: 01722088427</a>
+            <a id="footerWaLink" href="https://wa.me/8801722088427" target="_blank" class="bg-green-600/10 hover:bg-green-600/20 px-6 py-3 rounded-2xl text-stone-300 font-bold inline-block border border-green-600/30">WhatsApp: 01722088427</a>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+        <div id="authBox" class="bg-white rounded-3xl p-8 w-full max-sm shadow-2xl transition-transform">
+            <h3 class="text-2xl font-bold text-center mb-6 bengali-font">অ্যাডমিন পাসওয়ার্ড</h3>
+            <form id="authForm" class="space-y-4">
+                <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড লিখুন..." class="w-full p-4 border-2 rounded-xl text-center text-2xl tracking-widest focus:outline-none focus:border-orange-500 border-stone-100" />
+                <p id="authError" class="hidden text-red-500 text-center text-sm font-bold">পাসওয়ার্ড ভুল হয়েছে!</p>
+                <div class="flex space-x-3">
+                    <button type="button" id="closeAuth" class="flex-1 py-3 bg-stone-100 rounded-xl font-bold">বাতিল</button>
+                    <button type="submit" class="flex-1 py-3 bg-orange-600 text-white rounded-xl font-bold">প্রবেশ করুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="detailsModal" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="relative h-64 flex-shrink-0">
+                <img id="detailImg" src="" alt="" class="w-full h-full object-cover" />
+                <button id="closeDetail" class="absolute top-4 right-4 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full backdrop-blur-md transition-colors">✕</button>
+            </div>
+            <div class="p-8 overflow-y-auto">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 id="detailName" class="text-2xl font-bold text-stone-900 bengali-font"></h3>
+                        <span id="detailPrice" class="text-orange-600 font-bold text-xl"></span>
+                    </div>
+                    <span id="detailStock" class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-600">স্টক: আছে</span>
+                </div>
+                <div class="prose prose-stone mb-8">
+                    <h4 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-2">খাবারের বিবরণ:</h4>
+                    <p id="detailDesc" class="text-stone-600 leading-relaxed bengali-font whitespace-pre-wrap"></p>
+                </div>
+                <button id="detailOrderBtn" class="w-full bg-orange-600 hover:bg-orange-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-orange-100 transition-all active:scale-95 flex items-center justify-center space-x-2">
+                    <span>অর্ডার করুন</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Choice Modal -->
+    <div id="choiceModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl">
+            <div class="p-6 text-center border-b border-stone-100">
+                <h3 class="text-xl font-bold text-stone-800 mb-1 bengali-font">অর্ডার করার মাধ্যম বেছে নিন</h3>
+                <p id="choiceItemName" class="text-stone-400 text-sm"></p>
+            </div>
+            <div class="p-6 space-y-4">
+                <button id="btnOrderForm" class="w-full flex items-center justify-center space-x-4 bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-green-200">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="w-8 h-8 object-contain invert" />
+                    <span class="text-lg">অর্ডার করুন (Wa)</span>
+                </button>
+                <button id="btnOrderCall" class="w-full flex items-center justify-center space-x-3 bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-blue-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                    <span>সরাসরি কল (Call Now)</span>
+                </button>
+                <button id="closeChoice" class="w-full py-2 text-stone-400 font-medium text-sm hover:text-stone-600 transition-colors">ফিরে যান</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Form Modal -->
+    <div id="addressModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white rounded-3xl w-full max-w-md my-8 overflow-hidden shadow-2xl">
+            <div class="bg-orange-600 p-6 text-white text-center">
+                <h3 class="text-xl font-bold bengali-font">অর্ডার ফরম পূরণ করুন</h3>
+                <p id="addressItemName" class="text-sm opacity-90"></p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-stone-700 font-bold mb-1 text-sm">আপনার নাম:</label>
+                    <input type="text" id="orderName" class="w-full border-2 border-stone-100 rounded-xl p-3 focus:border-orange-500 outline-none" placeholder="নাম লিখুন..." />
+                </div>
+                <div>
+                    <label class="block text-stone-700 font-bold mb-1 text-sm">মোবাইল নম্বর:</label>
+                    <input type="tel" id="orderMobile" class="w-full border-2 border-stone-100 rounded-xl p-3 focus:border-orange-500 outline-none" placeholder="০১৭xxxxxxxx" />
+                </div>
+                <div>
+                    <label class="block text-stone-700 font-bold mb-1 text-sm">পরিমাণ (প্লেট):</label>
+                    <div class="flex items-center space-x-4">
+                        <button type="button" id="qtyMinus" class="w-10 h-10 rounded-full border-2 border-orange-500 text-orange-500 font-bold">−</button>
+                        <div id="qtyValue" class="text-2xl font-black">1</div>
+                        <button type="button" id="qtyPlus" class="w-10 h-10 rounded-full bg-orange-500 text-white font-bold shadow-md">+</button>
+                        <span id="maxStock" class="text-xs text-stone-400">স্টক: 20</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-stone-700 font-bold mb-1 text-sm">বিস্তারিত ঠিকানা:</label>
+                    <textarea id="orderAddress" class="w-full border-2 border-stone-100 rounded-xl p-3 h-20 focus:border-orange-500 outline-none" placeholder="বাসা নং, রোড, এলাকা..."></textarea>
+                </div>
+                <div>
+                    <button type="button" id="getLocationBtn" class="w-full py-3 rounded-xl font-bold flex items-center justify-center space-x-2 transition-all bg-stone-100 text-stone-600 border-2 border-dashed border-stone-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <span id="locationText">ডিভাইস লোকেশন দিন (ঐচ্ছিক)</span>
+                    </button>
+                </div>
+                
+                <div class="flex space-x-3 pt-2">
+                    <button id="closeAddress" class="flex-1 py-4 bg-stone-100 rounded-xl font-bold text-stone-600">বাতিল</button>
+                    <button id="submitOrder" class="flex-1 py-4 bg-green-600 text-white rounded-xl font-bold disabled:opacity-50 shadow-lg active:scale-95 transition-all">
+                        অর্ডার পাঠান
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set, update } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAf1mr3ue4sPVKo4q9MuOslIwqW8T2xlBs",
+            authDomain: "food-delivery-1-95fde.firebaseapp.com",
+            databaseURL: "https://food-delivery-1-95fde-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "food-delivery-1-95fde",
+            storageBucket: "food-delivery-1-95fde.firebasestorage.app",
+            messagingSenderId: "841086076319",
+            appId: "1:841086076319:web:3f62ef768d8426c323a9aa"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const menuRef = ref(db, 'menu');
+        const ordersRef = ref(db, 'orders');
+        const settingsRef = ref(db, 'settings');
+
+        // State
+        let menu = [];
+        let settings = {
+            siteName: 'রান্নাঘর গাজীপুর',
+            contactPhone: '01722088427',
+            whatsappPhone: '01722088427',
+            address: 'গাজীপুর, বাংলাদেশ',
+            isShopOpen: true
+        };
+        let currentFilter = 'all';
+        let selectedProduct = null;
+        let orderQuantity = 1;
+        let locationUrl = '';
+
+        // DOM Elements
+        const menuGrid = document.getElementById('menuGrid');
+        const shopClosedWarning = document.getElementById('shopClosedWarning');
+        const shopStatusBadge = document.getElementById('shopStatusBadge');
+        const siteNameEl = document.getElementById('siteName');
+        const footerSiteName = document.getElementById('footerSiteName');
+        const footerAddress = document.getElementById('footerAddress');
+        const footerCallLink = document.getElementById('footerCallLink');
+        const footerWaLink = document.getElementById('footerWaLink');
+
+        // --- Initialization ---
+
+        function init() {
+            // Fetch Settings
+            onValue(settingsRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    settings = data;
+                    updateUI();
+                }
+            });
+
+            // Fetch Menu
+            onValue(menuRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    menu = Object.keys(data).map(key => ({ ...data[key], id: key }));
+                    renderMenu();
+                } else {
+                    // Seed initial data if empty (Logic from constants.ts)
+                    seedDataIfEmpty();
+                }
+            });
+        }
+
+        async function seedDataIfEmpty() {
+             // Simplified seeding logic: In real app this would push constants
+             // For this static file, we assume DB might be empty or managed by admin
+        }
+
+        function updateUI() {
+            siteNameEl.textContent = settings.siteName;
+            footerSiteName.textContent = settings.siteName;
+            footerAddress.textContent = settings.address;
+            footerCallLink.href = `tel:${settings.contactPhone}`;
+            footerCallLink.textContent = `Call: ${settings.contactPhone}`;
+            footerWaLink.href = `https://wa.me/88${settings.whatsappPhone}`;
+            footerWaLink.textContent = `WhatsApp: ${settings.whatsappPhone}`;
+
+            if (settings.isShopOpen) {
+                shopClosedWarning.classList.add('hidden');
+                shopStatusBadge.classList.add('hidden');
+            } else {
+                shopClosedWarning.classList.remove('hidden');
+                shopStatusBadge.classList.remove('hidden');
+                shopStatusBadge.classList.add('flex');
+            }
+            renderMenu();
+        }
+
+        // --- Filtering & Rendering ---
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-orange-600', 'text-white', 'shadow-lg', 'scale-105');
+                    b.classList.add('bg-orange-100', 'text-orange-700');
+                });
+                e.target.classList.remove('bg-orange-100', 'text-orange-700');
+                e.target.classList.add('bg-orange-600', 'text-white', 'shadow-lg', 'scale-105');
+                
+                currentFilter = e.target.getAttribute('data-filter');
+                renderMenu();
+            });
+        });
+
+        function getFilteredMenu() {
+            let list = [...menu];
+            if (currentFilter === 'new') return list.filter(i => i.isNew);
+            if (currentFilter === 'popular') return list.filter(i => i.isPopular);
+            if (currentFilter === 'price-asc') return list.sort((a, b) => a.basePrice - b.basePrice);
+            return list;
+        }
+
+        function renderMenu() {
+            const filtered = getFilteredMenu();
+            menuGrid.innerHTML = filtered.map(item => {
+                const opacityClass = !settings.isShopOpen ? 'opacity-80 grayscale-[0.3]' : '';
+                const btnDisabled = !settings.isShopOpen || item.stock <= 0 ? 'disabled:bg-stone-200 cursor-not-allowed' : 'hover:bg-orange-700';
+                const btnText = !settings.isShopOpen ? 'শপ বন্ধ' : (item.stock <= 0 ? 'স্টক শেষ' : 'অর্ডার করুন');
+                const isDisabled = !settings.isShopOpen || item.stock <= 0;
+
+                return `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1 ${opacityClass}">
+                    <div class="relative h-52 overflow-hidden group cursor-pointer" onclick="openProductDetail('${item.id}')">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div class="absolute top-3 left-3 flex flex-col space-y-2 pointer-events-none">
+                            ${item.isNew ? '<span class="bg-blue-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-md">NEW</span>' : ''}
+                            ${item.isPopular ? '<span class="bg-orange-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-md">POPULAR</span>' : ''}
+                        </div>
+                        ${item.stock <= 0 ? '<div class="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none"><span class="bg-red-600 text-white px-4 py-1 rounded-full font-bold shadow-lg">স্টক শেষ</span></div>' : ''}
+                    </div>
+                    <div class="p-6 flex-grow flex flex-col">
+                        <h4 class="text-xl font-bold text-gray-900 bengali-font mb-2">${item.name}</h4>
+                        <p class="text-gray-500 text-sm mb-4 line-clamp-2 bengali-font flex-grow">${item.description || ''}</p>
+                        <div class="flex flex-col space-y-3 mt-auto pt-4 border-t border-stone-50">
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-black text-orange-600">৳${item.basePrice}</span>
+                                <span class="text-xs font-bold text-stone-600">${item.stock > 0 ? `${item.stock} প্লেট` : 'স্টক শেষ'}</span>
+                            </div>
+                            <button onclick="openChoice('${item.id}')" ${isDisabled ? 'disabled' : ''} class="w-full bg-orange-600 ${btnDisabled} text-white py-3 rounded-2xl font-bold shadow-md transition-all active:scale-95">
+                                ${btnText}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+            
+            // Expose functions to window
+            window.openProductDetail = openProductDetail;
+            window.openChoice = openChoice;
+        }
+
+        // --- Modal Logic ---
+
+        // Auth Modal
+        const authModal = document.getElementById('authModal');
+        document.getElementById('adminBtn').addEventListener('click', () => {
+            authModal.classList.remove('hidden');
+        });
+        document.getElementById('closeAuth').addEventListener('click', () => {
+            authModal.classList.add('hidden');
+        });
+        document.getElementById('authForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassword').value;
+            const authBox = document.getElementById('authBox');
+            const errorMsg = document.getElementById('authError');
+            
+            if (pass === "1914") {
+                window.location.href = 'admin.html';
+            } else {
+                authBox.classList.add('animate-shake');
+                errorMsg.classList.remove('hidden');
+                document.getElementById('adminPassword').value = '';
+                setTimeout(() => {
+                    authBox.classList.remove('animate-shake');
+                    errorMsg.classList.add('hidden');
+                }, 2000);
+            }
+        });
+
+        // Details Modal
+        const detailsModal = document.getElementById('detailsModal');
+        function openProductDetail(id) {
+            const item = menu.find(i => i.id === id);
+            if (!item) return;
+            
+            document.getElementById('detailImg').src = item.image;
+            document.getElementById('detailName').textContent = item.name;
+            document.getElementById('detailPrice').textContent = `৳${item.basePrice}`;
+            document.getElementById('detailDesc').textContent = item.description || 'কোনো বিবরণ নেই।';
+            
+            const stockEl = document.getElementById('detailStock');
+            if (item.stock > 0) {
+                stockEl.textContent = `স্টক: ${item.stock} প্লেট`;
+                stockEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-600';
+            } else {
+                stockEl.textContent = 'স্টক শেষ';
+                stockEl.className = 'px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600';
+            }
+
+            const orderBtn = document.getElementById('detailOrderBtn');
+            if (settings.isShopOpen && item.stock > 0) {
+                orderBtn.disabled = false;
+                orderBtn.classList.remove('bg-stone-200');
+                orderBtn.classList.add('bg-orange-600', 'hover:bg-orange-700');
+                orderBtn.textContent = 'অর্ডার করুন';
+                orderBtn.onclick = () => {
+                    detailsModal.classList.add('hidden');
+                    openChoice(id);
+                };
+            } else {
+                orderBtn.disabled = true;
+                orderBtn.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                orderBtn.classList.add('bg-stone-200');
+                orderBtn.textContent = !settings.isShopOpen ? 'শপ বন্ধ' : 'স্টক শেষ';
+                orderBtn.onclick = null;
+            }
+
+            detailsModal.classList.remove('hidden');
+        }
+        document.getElementById('closeDetail').addEventListener('click', () => detailsModal.classList.add('hidden'));
+
+        // Choice Modal
+        const choiceModal = document.getElementById('choiceModal');
+        function openChoice(id) {
+            selectedProduct = menu.find(i => i.id === id);
+            if (!selectedProduct) return;
+            
+            document.getElementById('choiceItemName').textContent = selectedProduct.name;
+            choiceModal.classList.remove('hidden');
+        }
+        document.getElementById('closeChoice').addEventListener('click', () => choiceModal.classList.add('hidden'));
+        document.getElementById('btnOrderForm').addEventListener('click', () => {
+            choiceModal.classList.add('hidden');
+            openAddressModal();
+        });
+        document.getElementById('btnOrderCall').addEventListener('click', () => {
+             window.location.href = `tel:${settings.contactPhone}`;
+        });
+
+        // Address Modal
+        const addressModal = document.getElementById('addressModal');
+        const orderName = document.getElementById('orderName');
+        const orderMobile = document.getElementById('orderMobile');
+        const orderAddress = document.getElementById('orderAddress');
+        const qtyValue = document.getElementById('qtyValue');
+        const maxStock = document.getElementById('maxStock');
+
+        function openAddressModal() {
+            if (!selectedProduct) return;
+            
+            // Reset form
+            orderName.value = '';
+            orderMobile.value = '';
+            orderAddress.value = '';
+            orderQuantity = 1;
+            qtyValue.textContent = orderQuantity;
+            locationUrl = '';
+            document.getElementById('locationText').textContent = 'ডিভাইস লোকেশন দিন (ঐচ্ছিক)';
+            document.getElementById('getLocationBtn').classList.remove('bg-blue-50', 'text-blue-600', 'border-blue-200');
+            document.getElementById('getLocationBtn').classList.add('bg-stone-100', 'text-stone-600', 'border-stone-300');
+
+            document.getElementById('addressItemName').textContent = selectedProduct.name;
+            maxStock.textContent = `স্টক: ${selectedProduct.stock}`;
+            
+            addressModal.classList.remove('hidden');
+        }
+
+        document.getElementById('closeAddress').addEventListener('click', () => addressModal.classList.add('hidden'));
+
+        document.getElementById('qtyMinus').addEventListener('click', () => {
+            if (orderQuantity > 1) {
+                orderQuantity--;
+                qtyValue.textContent = orderQuantity;
+            }
+        });
+
+        document.getElementById('qtyPlus').addEventListener('click', () => {
+            if (orderQuantity < selectedProduct.stock) {
+                orderQuantity++;
+                qtyValue.textContent = orderQuantity;
+            }
+        });
+
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+             if (!("geolocation" in navigator)) {
+                alert("আপনার ব্রাউজারে লোকেশন সুবিধা নেই।");
+                return;
+            }
+            const btn = document.getElementById('getLocationBtn');
+            const txt = document.getElementById('locationText');
+            txt.textContent = "লোকেশন নেওয়া হচ্ছে...";
+            
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    locationUrl = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    txt.textContent = "লোকেশন সেভ হয়েছে ✅";
+                    btn.classList.remove('bg-stone-100', 'text-stone-600', 'border-stone-300');
+                    btn.classList.add('bg-blue-50', 'text-blue-600', 'border-2', 'border-blue-200');
+                },
+                (err) => {
+                    console.error(err);
+                    alert("লোকেশন পাওয়া যায়নি। অনুগ্রহ করে অনুমতি দিন।");
+                    txt.textContent = "ডিভাইস লোকেশন দিন (ঐচ্ছিক)";
+                },
+                { timeout: 8000 }
+            );
+        });
+
+        document.getElementById('submitOrder').addEventListener('click', async () => {
+            const name = orderName.value.trim();
+            const mobile = orderMobile.value.trim();
+            const address = orderAddress.value.trim();
+
+            if (!name || !mobile || !address) {
+                alert("অনুগ্রহ করে সব তথ্য পূরণ করুন।");
+                return;
+            }
+
+            if (!settings.isShopOpen) {
+                alert("শপ বন্ধ আছে।");
+                return;
+            }
+
+            const btn = document.getElementById('submitOrder');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading-spinner mx-auto border-white border-l-transparent w-6 h-6"></div>';
+
+            try {
+                const totalPrice = selectedProduct.basePrice * orderQuantity;
+                const orderData = {
+                    itemId: selectedProduct.id,
+                    itemName: selectedProduct.name,
+                    customerName: name,
+                    mobileNumber: mobile,
+                    quantity: orderQuantity,
+                    totalPrice: totalPrice,
+                    address: address,
+                    timestamp: Date.now(),
+                    status: 'new',
+                    locationUrl: locationUrl
+                };
+
+                await push(ordersRef, orderData);
+
+                // Open WhatsApp
+                const message = `আসসালামু আলাইকুম, ${settings.siteName}!\n\nনতুন অর্ডার:\n🍴 খাবার: ${selectedProduct.name}\n👤 নাম: ${name}\n📱 মোবাইল: ${mobile}\n🔢 পরিমাণ: ${orderQuantity}\n💵 মোট মূল্য: ৳${totalPrice}\n🏠 ঠিকানা: ${address}\n${locationUrl ? `📍 লোকেশন: ${locationUrl}\n` : ''}\nধন্যবাদ!`;
+                
+                window.open(`https://wa.me/88${settings.whatsappPhone}?text=${encodeURIComponent(message)}`, '_blank');
+                
+                addressModal.classList.add('hidden');
+
+            } catch (err) {
+                console.error(err);
+                alert("অর্ডার পাঠাতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ চেক করুন।");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
+
+        // Start
+        init();
+    </script>
+</body>
+  </html>
