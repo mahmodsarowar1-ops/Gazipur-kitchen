@@ -41,28 +41,16 @@
         .thumb-active { border: 2px solid #ec4899; opacity: 1; }
         .thumb-inactive { border: 2px solid transparent; opacity: 0.6; }
 
-        /* --- Language Switch Styles (Blue Glass) --- */
+        /* --- Language Switch Styles --- */
         .lang-container { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .lang-switch {
-            position: relative;
-            width: 44px;
-            height: 24px;
-            background: rgba(59, 130, 246, 0.15); 
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            transition: 0.3s ease;
+            position: relative; width: 44px; height: 24px;
+            background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px; cursor: pointer; backdrop-filter: blur(4px); transition: 0.3s ease;
         }
         .lang-knob {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 18px;
-            height: 18px;
-            background: #3b82f6; 
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+            background: #3b82f6; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
         .lang-switch.active { background: rgba(59, 130, 246, 0.3); }
@@ -76,15 +64,11 @@
     <header class="fixed top-0 w-full z-50 glass transition-all duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <!-- Language Switcher -->
                 <div class="lang-container" onclick="toggleLanguage()">
-                    <div id="langSwitch" class="lang-switch">
-                        <div class="lang-knob"></div>
-                    </div>
+                    <div id="langSwitch" class="lang-switch"><div class="lang-knob"></div></div>
                     <span id="langCurrentText" class="lang-text">English</span>
                 </div>
                 
-                <!-- Logo -->
                 <div id="headerLogoContainer" class="flex items-center gap-2 ml-2">
                     <img id="siteLogoImg" src="" class="h-10 w-10 object-contain hidden" alt="Logo">
                     <span id="siteLogoText" class="text-3xl filter drop-shadow-sm">🥘</span>
@@ -111,12 +95,10 @@
     <div class="h-20"></div>
 
     <main class="flex-grow container mx-auto px-4 py-6 md:py-10">
-        
         <!-- Hero Section -->
         <div class="text-center mb-10 relative overflow-hidden rounded-3xl p-10 md:p-16 border border-white/10 bg-dark-900 shadow-2xl transition-all duration-500">
             <div id="heroBannerContainer" class="absolute inset-0 z-0 opacity-40 pointer-events-none bg-cover bg-center bg-no-repeat transition-all duration-700"></div>
             <div class="absolute inset-0 bg-gradient-to-b from-transparent via-dark-900/60 to-dark-900 z-10 pointer-events-none"></div>
-            
             <div class="relative z-20 animate-fade-up">
                 <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mb-4 drop-shadow-lg" id="heroTitle">Loading...</h2>
                 <div class="w-16 h-1 bg-gradient-to-r from-transparent via-pink-500 to-transparent mx-auto rounded-full mb-4"></div>
@@ -153,6 +135,7 @@
             <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
                 <a id="footerCallLink" href="#" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 shadow-sm btn-green-border">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                    <!-- Phone text will be updated dynamically via JS (e.g. Call Us) -->
                     <span id="footerPhone">Call Us</span>
                 </a>
                 <a id="footerWaLink" href="#" target="_blank" class="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] font-bold btn-green-border">
@@ -164,7 +147,7 @@
         </div>
     </footer>
 
-    <!-- Auth Modal -->
+    <!-- Modals (Auth, Details, Choice, Address) -->
     <div id="authModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
         <div id="authBox" class="glass-card rounded-3xl p-8 w-full max-w-sm relative z-10">
             <h3 class="text-2xl font-serif text-center text-white mb-6">Admin Access</h3>
@@ -179,7 +162,6 @@
         </div>
     </div>
 
-    <!-- Product Details Modal -->
     <div id="detailsModal" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-card w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] md:flex-row relative overflow-hidden border border-white/10">
             <div class="relative w-full md:w-1/2 h-72 md:h-auto shrink-0 bg-black flex flex-col">
@@ -189,7 +171,6 @@
                 </div>
                 <div id="detailThumbnails" class="h-16 bg-dark-900/80 flex items-center gap-2 overflow-x-auto px-4 hide-scroll"></div>
             </div>
-
             <div class="p-8 flex flex-col justify-between w-full md:w-1/2 bg-gradient-to-b from-dark-800 to-dark-900 overflow-y-auto custom-scroll">
                 <div>
                     <div class="flex justify-between items-start mb-4">
@@ -197,7 +178,8 @@
                         <div class="text-right">
                             <span id="detailOldPrice" class="block text-gray-400 text-sm line-through"></span>
                             <span id="detailPrice" class="block text-brand-green font-bold text-2xl"></span>
-                            <span id="detailUnit" class="text-xs text-gray-400 block"></span>
+                            <!-- Unit inside brackets -->
+                            <span id="detailUnit" class="text-xs text-gray-400 block font-bold"></span>
                         </div>
                     </div>
                     <span id="detailStock" class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-gray-300 mb-6">In Stock</span>
@@ -205,14 +187,11 @@
                         <p id="detailDesc" class="text-gray-400 leading-relaxed text-sm"></p>
                     </div>
                 </div>
-                <button id="detailOrderBtn" class="w-full bg-white text-dark-900 hover:bg-pink-500 hover:text-white py-4 rounded-2xl font-bold transition-all btn-green-border">
-                    Proceed to Order
-                </button>
+                <button id="detailOrderBtn" class="w-full bg-white text-dark-900 hover:bg-pink-500 hover:text-white py-4 rounded-2xl font-bold transition-all btn-green-border">Proceed to Order</button>
             </div>
         </div>
     </div>
 
-    <!-- Choice Modal -->
     <div id="choiceModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="bg-dark-card w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border border-white/10 p-6 space-y-3">
             <h3 id="lbl_method_title" class="text-xl font-serif text-white text-center mb-4">Order Method</h3>
@@ -222,7 +201,6 @@
         </div>
     </div>
 
-    <!-- Address Modal -->
     <div id="addressModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
         <div class="glass-card w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl animate-fade-up">
             <div class="bg-gradient-to-r from-pink-600 to-pink-500 p-6 text-white text-center"><h3 id="lbl_checkout_title" class="text-xl font-bold font-serif">Checkout</h3></div>
@@ -275,14 +253,16 @@
                 filterAll: "All Food", filterNew: "New Arrivals", filterPopular: "Popular", filterPrice: "Price (Low > High)",
                 btnDetails: "Details", btnClosed: "Closed", btnSold: "Sold Out", btnOrder: "Order Now", btnProceed: "Proceed to Order",
                 modalMethod: "Order Method", modalWa: "Order via WhatsApp", modalCall: "Call to Order", modalCancel: "Cancel", modalCheckout: "Checkout",
-                plhName: "Your Name", plhMobile: "Mobile Number", plhAddr: "Full Address...", btnAddLoc: "Add Current Location", btnPlace: "Place Order", setByOwner: "Set by Owner"
+                plhName: "Your Name", plhMobile: "Mobile Number", plhAddr: "Full Address...", btnAddLoc: "Add Current Location", btnPlace: "Place Order", setByOwner: "Set by Owner",
+                btnCall: "Call Us" // New Key
             },
             bn: {
                 premium: "প্রিমিয়াম ডাইনিং", closed: "বন্ধ", shopClosedTitle: "দোকান বর্তমানে বন্ধ", shopClosedMsg: "আমরা এই মুহূর্তে কোনো নতুন অর্ডার নিচ্ছি না।", noFood: "দুঃখিত, কোনো খাবার পাওয়া যায়নি।", search: "খাবার খুঁজুন...",
                 filterAll: "সব খাবার", filterNew: "নতুন খাবার", filterPopular: "জনপ্রিয়", filterPrice: "দাম (কম > বেশি)",
                 btnDetails: "বিস্তারিত", btnClosed: "বন্ধ", btnSold: "স্টক শেষ", btnOrder: "অর্ডার করুন", btnProceed: "অর্ডার কনফার্ম করুন",
                 modalMethod: "অর্ডারের মাধ্যম", modalWa: "হোয়াটসঅ্যাপে অর্ডার", modalCall: "কল করে অর্ডার", modalCancel: "বাতিল", modalCheckout: "চেকআউট",
-                plhName: "আপনার নাম", plhMobile: "মোবাইল নম্বর", plhAddr: "সম্পূর্ণ ঠিকানা...", btnAddLoc: "বর্তমান লোকেশন দিন", btnPlace: "অর্ডার সম্পন্ন করুন", setByOwner: "Set by Owner"
+                plhName: "আপনার নাম", plhMobile: "মোবাইল নম্বর", plhAddr: "সম্পূর্ণ ঠিকানা...", btnAddLoc: "বর্তমান লোকেশন দিন", btnPlace: "অর্ডার সম্পন্ন করুন", setByOwner: "Set by Owner",
+                btnCall: "কল করুন" // New Key
             }
         };
 
@@ -324,6 +304,8 @@
             document.getElementById('getLocationBtn').textContent = lang.btnAddLoc;
             document.getElementById('closeAddress').textContent = lang.modalCancel;
             document.getElementById('submitOrder').textContent = lang.btnPlace;
+            // Update Footer Call Button Text (Requirement Fix)
+            document.getElementById('footerPhone').textContent = lang.btnCall;
         }
 
         function init() {
@@ -344,14 +326,20 @@
             document.getElementById('footerSiteName').textContent = settings.siteName;
             if(settings.siteLogo) { document.getElementById('siteLogoImg').src = settings.siteLogo; document.getElementById('siteLogoImg').classList.remove('hidden'); document.getElementById('siteLogoText').classList.add('hidden'); }
             document.getElementById('footerAddress').textContent = settings.address;
+            
+            // Footer Call Button Logic
             document.getElementById('footerCallLink').href = `tel:${settings.contactPhone}`;
-            document.getElementById('footerPhone').textContent = settings.contactPhone;
+            // NOTE: We do NOT set the textContent to the phone number anymore. It's handled by language UI.
+            
             document.getElementById('footerWaLink').href = `https://wa.me/88${settings.whatsappPhone}`;
             document.getElementById('heroTitle').textContent = settings.heroTitle || 'Exquisite Flavors';
             document.getElementById('heroDesc').textContent = settings.heroDesc || 'Authentic Taste';
             if(settings.heroBannerUrl) document.getElementById('heroBannerContainer').style.backgroundImage = `url('${settings.heroBannerUrl}')`;
             if (settings.isShopOpen) { document.getElementById('shopClosedWarning').classList.add('hidden'); document.getElementById('shopStatusBadge').classList.add('hidden'); } 
             else { document.getElementById('shopClosedWarning').classList.remove('hidden'); document.getElementById('shopStatusBadge').classList.remove('hidden'); }
+            
+            // Ensure language is applied immediately on load
+            updateLanguageUI();
         }
 
         function renderFilters() {
@@ -384,8 +372,8 @@
                 if (currentFilter === 'new' && item.isNew) showOwnerTag = true;
                 if (currentFilter === 'popular' && item.isPopular) showOwnerTag = true;
 
-                // Added Stock & Unit display (Fixed problem)
-                const unitHtml = item.unit ? `<span class="text-pink-500 font-bold ml-1">/ ${item.unit}</span>` : '';
+                // Unit Display with Brackets
+                const unitHtml = item.unit ? `<span class="text-[10px] text-gray-400 opacity-70">(${item.unit})</span>` : '';
 
                 return `
                 <div class="glass-card rounded-2xl overflow-hidden group hover:shadow-pink-500/10 flex flex-col h-full animate-fade-up" style="animation-delay: ${index * 50}ms">
@@ -402,10 +390,12 @@
                             <h4 class="text-lg font-bold text-white line-clamp-2">${item.name}</h4>
                             <div class="flex flex-col items-end shrink-0 pl-2">
                                 <div class="text-lg font-bold text-brand-green">${priceDisplay}</div>
-                                ${item.stock > 0 ? `<span class="text-[10px] text-gray-400">Stock: ${item.stock} ${unitHtml}</span>` : ''}
+                                ${unitHtml} 
                             </div>
                         </div>
+                        
                         ${showOwnerTag ? `<p class="text-[9px] text-gray-500 mb-2 italic">${lang.setByOwner}</p>` : `<div class="mb-5"></div>`}
+
                         <div class="mt-auto grid grid-cols-2 gap-3">
                              <button onclick="openProductDetail('${item.id}')" class="py-2.5 rounded-lg font-medium text-xs border text-gray-300 hover:text-white btn-green-border">${lang.btnDetails}</button>
                             <button onclick="openChoice('${item.id}')" ${isDisabled ? 'disabled' : ''} class="py-2.5 rounded-lg font-bold text-xs btn-green-border ${isDisabled ? 'bg-gray-800 text-gray-500' : 'bg-pink-600 hover:bg-pink-500 text-white'}">
@@ -431,7 +421,10 @@
             
             document.getElementById('detailName').textContent = item.name;
             document.getElementById('detailDesc').textContent = item.description || '';
-            document.getElementById('detailUnit').textContent = item.unit ? `/ ${item.unit}` : '';
+            
+            // Unit in brackets for Details Modal too
+            document.getElementById('detailUnit').textContent = item.unit ? `(${item.unit})` : '';
+            
             const oldPriceEl = document.getElementById('detailOldPrice');
             document.getElementById('detailPrice').textContent = `৳${item.offerPrice}`;
             if(item.originalPrice > item.offerPrice) { oldPriceEl.textContent = `৳${item.originalPrice}`; oldPriceEl.classList.remove('hidden'); } else oldPriceEl.classList.add('hidden');
@@ -464,7 +457,6 @@
         document.getElementById('qtyMinus').onclick = () => { if(orderQuantity > 1) document.getElementById('qtyValue').textContent = --orderQuantity; };
         document.getElementById('qtyPlus').onclick = () => { if(orderQuantity < selectedProduct.stock) document.getElementById('qtyValue').textContent = ++orderQuantity; };
         
-        // Location Fix: Increased timeout and added enableHighAccuracy
         document.getElementById('getLocationBtn').onclick = () => {
              if(!navigator.geolocation) return;
              const btn = document.getElementById('getLocationBtn');
@@ -491,7 +483,6 @@
             const btn = document.getElementById('submitOrder'); btn.disabled = true; btn.textContent = 'Processing...';
             try {
                 const total = selectedProduct.offerPrice * orderQuantity;
-                // Fixed: key renamed to mobileNumber for Admin Panel compatibility
                 await push(ordersRef, { itemId: selectedProduct.id, itemName: selectedProduct.name, customerName: name, mobileNumber: mobile, address, quantity: orderQuantity, totalPrice: total, status: 'new', locationUrl, timestamp: Date.now() });
                 const msg = `Order: ${selectedProduct.name}\nName: ${name}\nQty: ${orderQuantity}\nTotal: ৳${total}\nAddr: ${address}\n${locationUrl}`;
                 window.open(`https://wa.me/88${settings.whatsappPhone}?text=${encodeURIComponent(msg)}`, '_blank');
